@@ -2,8 +2,9 @@ package siakad_api.controller;
 
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
+import siakad_api.dto.LoginRequest;
+import siakad_api.utils.JwtUtil;
+
 import java.util.Map;
 
 @RestController
@@ -11,18 +12,13 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class AuthController {
 
-   @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody Map<String, String> request) {
-        String username = request.get("username");
-        String password = request.get("password");
+    @PostMapping("/login")
+    public Map<String, String> login(@RequestBody LoginRequest req) {
+        if (req.getUsername().equals("admin") && req.getPassword().equals("123")) {
+            String token = JwtUtil.generateToken(req.getUsername());
 
-        if ("admin".equals(username) && "123".equals(password)) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("token", "dummy-token-123");
-            response.put("username", username);
-            return response;
-        } else {
-            throw new RuntimeException("Username atau password salah");
+            return Map.of("token", token);
         }
+        throw new RuntimeException("Invalid login");
     }
 }
