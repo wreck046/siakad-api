@@ -16,6 +16,12 @@ public class JwtFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         String path = req.getRequestURI();
 
+        if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
+            ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_OK);
+            chain.doFilter(request, response);
+            return;
+        }
+
         // skip login
         if (path.contains("/login")) {
             chain.doFilter(request, response);
